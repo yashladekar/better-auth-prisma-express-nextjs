@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signOut } from "@/lib/auth-client";
+import { useSession, signOut, getExtendedUser } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -41,7 +41,7 @@ export default function SettingsPage() {
     return null;
   }
 
-  const user = session.user;
+  const user = getExtendedUser(session.user);
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSession } from "@/lib/auth-client";
+import { useSession, getExtendedUser } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -252,7 +252,7 @@ export default function AdminUsersPage() {
     return null;
   }
 
-  const currentUser = session.user;
+  const currentUser = getExtendedUser(session.user);
   const isAdmin = currentUser.role === "ADMIN" || currentUser.role === "SUPER_ADMIN";
   const isSuperAdmin = currentUser.role === "SUPER_ADMIN";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "@/lib/auth-client";
+import { useSession, getExtendedUser } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,6 +38,8 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const user = session ? getExtendedUser(session.user) : null;
 
   const {
     register,
@@ -46,8 +48,8 @@ export default function ProfilePage() {
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     values: {
-      name: session?.user.name ?? "",
-      image: session?.user.image ?? "",
+      name: user?.name ?? "",
+      image: user?.image ?? "",
     },
   });
 
@@ -59,12 +61,10 @@ export default function ProfilePage() {
     );
   }
 
-  if (!session) {
+  if (!session || !user) {
     router.push("/login");
     return null;
   }
-
-  const user = session.user;
 
   const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true);

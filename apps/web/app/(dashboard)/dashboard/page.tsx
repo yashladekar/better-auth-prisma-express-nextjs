@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signOut } from "@/lib/auth-client";
+import { useSession, signOut, getExtendedUser } from "@/lib/auth-client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -54,7 +54,7 @@ export default function DashboardPage() {
     return null;
   }
 
-  const user = session.user;
+  const user = getExtendedUser(session.user);
   const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
 
   return (

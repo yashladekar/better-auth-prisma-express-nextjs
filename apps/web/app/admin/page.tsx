@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "@/lib/auth-client";
+import { useSession, getExtendedUser } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -86,7 +86,7 @@ export default function AdminPage() {
     return null;
   }
 
-  const user = session.user;
+  const user = getExtendedUser(session.user);
   const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
 
   if (!isAdmin) {

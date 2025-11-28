@@ -8,19 +8,19 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     },
     "./roles": {
+      "types": "./dist/roles.d.ts",
       "import": "./dist/roles.mjs",
-      "require": "./dist/roles.js",
-      "types": "./dist/roles.d.ts"
+      "require": "./dist/roles.js"
     },
     "./permissions": {
+      "types": "./dist/permissions.d.ts",
       "import": "./dist/permissions.mjs",
-      "require": "./dist/permissions.js",
-      "types": "./dist/permissions.d.ts"
+      "require": "./dist/permissions.js"
     }
   },
   "scripts": {
@@ -35,6 +35,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.10.1",
     "eslint": "^9.16.0",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2"

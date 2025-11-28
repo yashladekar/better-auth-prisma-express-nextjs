@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
 
 // Routes that require authentication
 const protectedRoutes = ["/dashboard", "/profile", "/settings"];
@@ -13,8 +12,8 @@ const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password"
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Get session cookie using Better Auth helper
-  const sessionCookie = getSessionCookie(request);
+  // Get session cookie - Better Auth uses 'better-auth.session_token' by default
+  const sessionCookie = request.cookies.get("better-auth.session_token");
 
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
