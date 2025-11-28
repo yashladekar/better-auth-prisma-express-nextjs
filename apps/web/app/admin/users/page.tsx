@@ -33,6 +33,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@repo/ui";
 import {
   Loader2,
@@ -90,6 +98,10 @@ export default function AdminUsersPage() {
   // Role dialog state
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
+
+  // Delete dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const fetchUsers = useCallback(async (page = 1) => {
     setIsLoading(true);
@@ -213,13 +225,13 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleDeleteUser = async (user: User) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
     setActionLoading(true);
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/users/${user.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/users/${userToDelete.id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -231,12 +243,19 @@ export default function AdminUsersPage() {
         throw new Error(data.error ?? "Failed to delete user");
       }
 
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
       fetchUsers(pagination.page);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete user");
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const openDeleteDialog = (user: User) => {
+    setUserToDelete(user);
+    setDeleteDialogOpen(true);
   };
 
   if (isPending) {
@@ -398,7 +417,7 @@ export default function AdminUsersPage() {
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 className="text-destructive"
-                                onClick={() => handleDeleteUser(user)}
+                                onClick={() => openDeleteDialog(user)}
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete User
@@ -519,6 +538,30 @@ export default function AdminUsersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete User Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete {userToDelete?.name ?? userToDelete?.email}? 
+              This action cannot be undone. All user data will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={actionLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteUser}
+              disabled={actionLoading}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {actionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
